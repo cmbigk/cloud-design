@@ -1,4 +1,11 @@
 ## Cloud-Design
+
+<center>
+<img
+    src="./resources/cloud-design.jpg?raw=true" style = "width: 600px
+    !important; height: 600px !important;"/>
+</center>
+
 ### Overview
 
 This project focuses on designing, deploying, and operating a cloud-based
