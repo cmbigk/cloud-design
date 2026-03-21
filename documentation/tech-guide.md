@@ -78,8 +78,25 @@ Your **API Gateway** is publicly accessible at: **`http://51.21.222.216`**
 
 ---
 
-## 🛑 HOW TO STOP EVERYTHING (To avoid costs)
+## 6. Restart & Resume (After "Stopping" your Instance)
 
+If you simply "Stopped" your EC2 instance in the AWS console to save money:
+
+1.  **Start Instance:** Go to the AWS Console (Stockholm region) and click **Start Instance** on `k3s-single-node`.
+2.  **Update Kubeconfig:** Wait 60 seconds for the server to wake up. Run:
+    ```bash
+    ./scripts/deploy.sh
+    ```
+    *This will refresh your local `k3s.yaml` with the new Public IP address.*
+3.  **Verify:**
+    ```bash
+    export KUBECONFIG=$(pwd)/kubeconfig/k3s.yaml
+    kubectl get pods
+    ```
+
+---
+
+## 7. Cleanup (Avoiding Costs)
 To completely delete the AWS infrastructure and stop using your credits:
 1.  Open your terminal.
 2.  Navigate to the `terraform` folder: `cd terraform`
