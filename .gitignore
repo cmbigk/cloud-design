@@ -1,13 +1,46 @@
-# Terraform
+# --- Infrastructure & Orchestration ---
+# Terraform binaries and local state
 .terraform/
 *.tfstate
 *.tfstate.*
 .terraform.lock.hcl
+*.tfvars
+*.tfvars.json
 
-# Kubernetes
+# Kubernetes local cluster configs & sensitive certs
 kubeconfig/
+k3s.yaml
 *.yaml.bak
 
-# Common
-**/*.bak
+# Docker logs and overrides
+*.log
+docker-compose.override.yml
+
+# --- Programming Languages ---
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.env
+.venv
+env/
+venv/
+build/
+dist/
+
+# --- Operating Systems ---
+# macOS
 .DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# --- Backup Files ---
+*.bak
+*.swp
+*~
+*.tmp
