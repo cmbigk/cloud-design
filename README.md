@@ -3,7 +3,7 @@
 This project implements a scalable microservices architecture on AWS using K3s.
 
 ## Quick Links
-- [Project Overview](documentation/project.md)
+- [Project Overview](task/project.md)
 - [Technical Guide](documentation/tech-guide.md)
 - [AWS Implementation Approaches](documentation/aws_approaches.md)
 
