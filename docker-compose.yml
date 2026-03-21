@@ -1,0 +1,68 @@
+version: '3.8'
+
+services:
+  rabbit-queue:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+
+  inventory-db:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: mypassword
+      POSTGRES_DB: movies_db
+    ports:
+      - "5432:5432"
+
+  billing-db:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: mypassword
+      POSTGRES_DB: orders_db
+    ports:
+      - "5433:5432"
+
+  inventory-app:
+    build: ./src/inventory
+    environment:
+      DB_HOST: inventory-db
+      DB_USER: postgres
+      DB_PASS: mypassword
+      DB_NAME: movies_db
+    depends_on:
+      - inventory-db
+
+  billing-app:
+    build: ./src/billing
+    environment:
+      DB_HOST: billing-db
+      DB_USER: postgres
+      DB_PASS: mypassword
+      DB_NAME: orders_db
+      RABBITMQ_HOST: rabbit-queue
+      RABBITMQ_USER: guest
+      RABBITMQ_PASS: guest
+    depends_on:
+      - billing-db
+      - rabbit-queue
+
+  api-gateway:
+    build: ./src/gateway
+    environment:
+      INVENTORY_URL: http://inventory-app:8080
+      BILLING_URL: http://billing-app:8080
+      RABBITMQ_HOST: rabbit-queue
+      RABBITMQ_USER: guest
+      RABBITMQ_PASS: guest
+    ports:
+      - "3000:3000"
+    depends_on:
+      - inventory-app
+      - billing-app
+      - rabbit-queue
