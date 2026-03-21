@@ -1,0 +1,13 @@
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+.terraform.lock.hcl
+
+# Kubernetes
+kubeconfig/
+*.yaml.bak
+
+# Common
+**/*.bak
+.DS_Store

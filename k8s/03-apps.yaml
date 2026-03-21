@@ -1,0 +1,131 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: inventory-app
+spec:
+  ports:
+    - port: 8080
+      targetPort: 8080
+  selector:
+    app: inventory-app
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: inventory-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: inventory-app
+  template:
+    metadata:
+      labels:
+        app: inventory-app
+    spec:
+      containers:
+      - name: app
+        image: 361990119373.dkr.ecr.eu-north-1.amazonaws.com/inventory-app:latest
+        env:
+        - name: DB_HOST
+          value: inventory-db
+        - name: DB_USER
+          value: postgres
+        - name: DB_PASS
+          value: mypassword
+        - name: DB_NAME
+          value: movies_db
+        ports:
+        - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: billing-app
+spec:
+  ports:
+    - port: 8080
+      targetPort: 8080
+  selector:
+    app: billing-app
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: billing-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: billing-app
+  template:
+    metadata:
+      labels:
+        app: billing-app
+    spec:
+      containers:
+      - name: app
+        image: 361990119373.dkr.ecr.eu-north-1.amazonaws.com/billing-app:latest
+        env:
+        - name: DB_HOST
+          value: billing-db
+        - name: DB_USER
+          value: postgres
+        - name: DB_PASS
+          value: mypassword
+        - name: DB_NAME
+          value: orders_db
+        - name: RABBITMQ_HOST
+          value: rabbit-queue
+        - name: RABBITMQ_USER
+          value: guest
+        - name: RABBITMQ_PASS
+          value: guest
+        ports:
+        - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: api-gateway
+spec:
+  ports:
+    - name: app
+      port: 3000
+      targetPort: 3000
+    - name: web
+      port: 80 # Route port 80 traffic to 3000 internally
+      targetPort: 3000
+  selector:
+    app: api-gateway
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-gateway
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: api-gateway
+  template:
+    metadata:
+      labels:
+        app: api-gateway
+    spec:
+      containers:
+      - name: app
+        image: 361990119373.dkr.ecr.eu-north-1.amazonaws.com/api-gateway:latest
+        env:
+        - name: INVENTORY_URL
+          value: "http://inventory-app:8080"
+        - name: BILLING_URL
+          value: "http://billing-app:8080"
+        - name: RABBITMQ_HOST
+          value: rabbit-queue
+        - name: RABBITMQ_USER
+          value: guest
+        - name: RABBITMQ_PASS
+          value: guest
+        ports:
+        - containerPort: 3000
